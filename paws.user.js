@@ -3,7 +3,7 @@
 // @namespace    http://tombenner.co/
 // @version      0.0.1
 // @description  Keyboard shortcuts for the AWS Console
-// @author       Tom Benner
+// @author       Rallis
 // @match        https://*.console.aws.amazon.com/*
 // @grant        none
 // @require https://code.jquery.com/jquery-1.11.3.min.js
@@ -21,6 +21,9 @@ Paws.App = (function () {
     self.commandsCallbacks = {
         //Home
         'home': {href: '/console'},
+        //Region
+        'euwest': {region: 'eu-west-1'},
+        'useast': {region: 'us-east-1'},
         // Services
         'ct': {href: '/cloudtrail/home#/events'},
         'ec2': {href: '/ec2/v2/home#Instances:sort=desc:launchTime'},
@@ -33,6 +36,7 @@ Paws.App = (function () {
         'vpc': {href: '/vpc/home'},
         'cft': {href: '/cloudformation/home'},
         'da': {href: '/lambda/home'},
+        'sqs': {href: '/sqs/home'},
         // Pages
         'img': {href: '/ec2/v2/home#Images:sort=name'},
         'vol': {href: '/ec2/v2/home#Volumes:sort=desc:createTime'},
@@ -61,7 +65,16 @@ Paws.App = (function () {
             var command = key;
             command = command.split('').join(' ');
             var callback;
-            if (value['href']) {
+            if (value['region']) {
+                callback = function () {
+                    self.log('REGION redirect.. to ' + value['region']);
+                    var tmp_url = new URL(String(window.location));
+                    var new_url = tmp_url.origin + tmp_url.pathname + "?region=" + value['region'];
+                    // self.log(window.location);
+                    // self.log(String(window.location).indexOf("?") > -1);
+                    window.location.href = new_url;
+                };
+            } else if (value['href']) {
                 callback = function () {
                     self.log('Redirecting to ' + value['href']);
                     window.location.href = value['href'];
